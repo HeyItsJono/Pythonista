@@ -12,11 +12,11 @@ def parse_name(url):
 	n = len(url)-1
 	name = ''
 	try:
-		assert u'/' in url
+		assert r'/' in url
 	except AssertionError:
 		return url
 	for char in url:
-		if url[n] != u'/':
+		if url[n] != r'/':
 			name = url[n] + name
 			n += -1
 		else:
@@ -27,11 +27,11 @@ def parse_extension(name):
 	n = len(name)-1
 	extension = ''
 	try:
-		assert u'.' in name
+		assert r'.' in name
 	except AssertionError:
 		return extension
 	for char in name:
-		if name[n] != u'.':
+		if name[n] != r'.':
 			extension = name[n] + extension
 			n += -1
 		else:
@@ -72,7 +72,7 @@ def button_tapped(sender):
 	hud_alert('Downloading...')
 	try:
 		console.show_activity()
-		url = ui.in_background(urllib2.urlopen(urlfield.text))
+		url = urllib2.urlopen(urlfield.text)
 #       url = download(urlfield.text)
 	except (ValueError, urllib2.URLError):
 		hud_alert('URL not valid', icon = 'error')
