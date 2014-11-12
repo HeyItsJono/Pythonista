@@ -37,16 +37,11 @@ def parse_extension(name):
 		else:
 			break
 	return extension
+	
 
-
-#@ui.in_background
-#def download(url):
-#   return urllib2.urlopen(url)
-
-
-def button_tapped(sender):
+def download_tapped(sender):
 	'@type sender: ui.Button'
-
+	
 	console.clear()
 
 	urlfield = sender.superview['urlfield']
@@ -60,7 +55,10 @@ def button_tapped(sender):
 		extension = '.pyui'
 	elif extensioncontrol.selected_index == 2:
 		if extensionfield.text != '':
-			extension = '.' + extensionfield.text
+			if not '.' in extensionfield.text:
+				extension = '.' + extensionfield.text
+			else:
+				extension = extensionfield.text
 		else:
 			extension = ''
 
@@ -72,15 +70,20 @@ def button_tapped(sender):
 	hud_alert('Downloading...')
 	try:
 		console.show_activity()
-		url = urllib2.urlopen(urlfield.text)
-#       url = download(urlfield.text)
+		url = urllib2.urlopen(urlfield.text).read()
 	except (ValueError, urllib2.URLError):
 		hud_alert('URL not valid', icon = 'error')
 		sys.exit()
 	hud_alert("Saving...")
-	with open(filename, "w") as out_file:
-		out_file.write(url.read())
-		out_file.close()
+	try:
+		with open(filename, "w") as out_file:
+			out_file.write(url)
+			out_file.close()
+	except IOError:
+		os.makedirs(os.path.dirname(filename))
+		with open(filename, "w") as out_file:
+			out_file.write(url)
+			out_file.close()
 	console.hide_activity()
 	hud_alert("Saved!")
 
@@ -124,7 +127,7 @@ def clear_tapped(sender):
 		extensionfield.text = ''
 
 
-v = ui.load_view('Script Downloader')
+v = ui.load_view('Script_Downloader')
 if ui.get_screen_size()[1] >= 768:
 	# iPad
 	v.present('popover')
