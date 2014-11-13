@@ -1,28 +1,15 @@
-from console import clear
-from console import hud_alert
-from os import remove
-
-def drop_extension(filename):
-	dictionary = dict(enumerate(filename, start = 1))
-	try:
-		assert '.' in dictionary.values()
-	except AssertionError:
-		return filename
-	for (k, v) in dictionary.iteritems():
-		if v == '.':
-			return filename[:k-1]
-		else:
-			pass
+import console, os, sys
 
 if __name__ == '__main__':
-	clear()
-	filename = raw_input('Enter filename (Path Optional) \n')
-	with open(drop_extension(filename) + '.txt', 'w') as out_file:
-		try:
-			with open(filename, 'r') as in_file:
-				out_file.write(in_file.read())
-				in_file.close()
-		except IOError:
-			hud_alert('File not found', icon = 'error')
-			remove(drop_extension(filename) + '.txt')
-		out_file.close()
+    console.clear()
+    filename = raw_input('Enter filename (Path Optional) \n')
+    if not filename:
+        sys.exit('No filename entered.')
+    if filename.endswith('.txt'):
+        sys.exit('Can not convert .txt to .txt.')
+    try:
+        with open(filename, 'r') as in_file:
+            with open(os.path.splitext(filename)[0] + '.txt', 'w') as out_file:
+                out_file.write(in_file.read())
+    except IOError:
+        console.hud_alert('File not found: ' + filename, icon = 'error')
